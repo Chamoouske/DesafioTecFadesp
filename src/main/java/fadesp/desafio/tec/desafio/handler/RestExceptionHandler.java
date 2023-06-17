@@ -65,6 +65,19 @@ public class RestExceptionHandler {
 
         return new ResponseEntity<>(vrDetails, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handleBadRequestException(BadRequestException ex){
+        BadRequestDetails brDetails = BadRequestDetails.Builder
+                .newBuilder()
+                .timestamp(new Date().getTime())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .title("Bad Request")
+                .detail("Request invalid")
+                .developerMessage(ex.getClass().getName())
+                .build();
+        
+        return new ResponseEntity<>(brDetails, HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleExceptionInternal(Exception ex) {
         ErrorDetails errorDetails = ErrorDetails.Builder
