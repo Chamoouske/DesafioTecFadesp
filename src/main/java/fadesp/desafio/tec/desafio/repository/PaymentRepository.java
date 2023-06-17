@@ -9,4 +9,5 @@ import java.util.List;
 public interface PaymentRepository  extends CrudRepository<Payment, Long>, PagingAndSortingRepository<Payment, Long> {
     List<Payment> findByCpfPayer(String cpf);
     List<Payment> findByStatusPayment(String statusPayment);
+    Payment findByCodPayment(int codPayment);
 }

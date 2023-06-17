@@ -1,11 +1,18 @@
 package fadesp.desafio.tec.desafio.model;
 
+import fadesp.desafio.tec.desafio.error.BadRequestException;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
 @Entity
-public class Payment extends AbstractEntity {
+public class Payment {
+    @Id
+    @NotNull
+    @Range(min = 1L)
+    private long codPayment;
     @NotEmpty(message = "Must not be Empty")
     private String cpfPayer;
     @NotEmpty(message = "Must not be Empty")
@@ -15,12 +22,32 @@ public class Payment extends AbstractEntity {
     private float price;
     private String statusPayment;
 
+    public long getCodPayment() {
+        return codPayment;
+    }
+
+    public void setCodPayment(int codPayment) {
+        this.codPayment = codPayment;
+    }
+
     public String getStatusPayment() {
         return statusPayment;
     }
 
     public void setStatusPayment(String statusPayment) {
-        this.statusPayment = statusPayment;
+        if(this.statusPayment == null){
+            this.statusPayment = statusPayment;
+            return;
+        }
+        if(this.statusPayment.equals(statusPayment))
+            throw new BadRequestException(this.statusPayment + " cannot be changed to " + statusPayment);
+        if(this.statusPayment.equals("Pendente de Processamento")){
+            this.statusPayment = statusPayment;
+        } else if (this.statusPayment.equals("Processado com Falha") && statusPayment.equals("Pendente de Processamento")) {
+            this.statusPayment = statusPayment;
+        }else{
+            throw new BadRequestException(this.statusPayment + " cannot be changed to " + statusPayment);
+        }
     }
 
     public String getCpfPayer() {

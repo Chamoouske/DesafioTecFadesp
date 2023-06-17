@@ -1,8 +1,12 @@
 package fadesp.desafio.tec.desafio.endpoint;
 
+import fadesp.desafio.tec.desafio.error.BadRequestException;
 import fadesp.desafio.tec.desafio.error.ResourceNotFoundException;
 import fadesp.desafio.tec.desafio.error.ValidationErrorException;
+import fadesp.desafio.tec.desafio.model.Filter;
 import fadesp.desafio.tec.desafio.model.Payment;
+import fadesp.desafio.tec.desafio.model.PaymentDelete;
+import fadesp.desafio.tec.desafio.model.PaymentProcess;
 import fadesp.desafio.tec.desafio.repository.PaymentRepository;
 
 import jakarta.validation.Valid;
@@ -10,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -29,65 +32,85 @@ public class PaymentEndpoint {
     @PostMapping
     @Transactional
     public ResponseEntity<?> savePayment(@Valid @RequestBody Payment payment){
+        Optional<Payment> paymentExists = paymentDAO.findById(payment.getCodPayment());
+        if(paymentExists.isPresent())
+            throw new ValidationErrorException("codPayment", "Payment with cod "+payment.getCodPayment()+" as already registered");
         validateDetails(payment);
         payment.setStatusPayment("Pendente de Processamento");
         return new ResponseEntity<>(paymentDAO.save(payment), HttpStatus.CREATED);
     }
-    @GetMapping(path="getAll/")
-    public ResponseEntity<?> searchPayments(){
-        return new ResponseEntity<>(paymentDAO.findAll(), HttpStatus.OK);
+    @GetMapping(path="search/")
+    public ResponseEntity<?> searchPayments(@RequestBody(required = false) Filter filter){
+        if(filter == null || filter.getFilter() == null) {
+            return new ResponseEntity<>(paymentDAO.findAll(), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(resultSearchPayment(filter.getFilter(), filter.getValue()), HttpStatus.OK);
+        }
     }
-    @GetMapping(path = "search/key={key}&value={value}")
+    @GetMapping(path = "search/filter={key}&value={value}")
     public ResponseEntity<?> searchPayment(@PathVariable("key") String key, @PathVariable("value") String value){
         return new ResponseEntity<>(resultSearchPayment(key, value), HttpStatus.OK);
     }
-    @GetMapping(path="id/{value}")
-    public ResponseEntity<?> searchPaymentById(@PathVariable("value") Long id){
-        verifyPaymentExistsById(id);
-        Optional<Payment> payment = paymentDAO.findById(id);
-        return new ResponseEntity<>(payment, HttpStatus.OK);
+    @DeleteMapping(path = "delete/{codPayment}")
+    public ResponseEntity<?> deletePayment(@PathVariable Long codPayment){
+        verifyPaymentExistsById(codPayment);
+        Optional<Payment> payment = paymentDAO.findById(codPayment);
+        if (payment.get().getStatusPayment().equals("Pendente de Processamento")){
+            paymentDAO.deleteById(codPayment);
+        } else {
+            throw new BadRequestException("Payment cannot be Deleted: Payment status: " + payment.get().getStatusPayment());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-    @GetMapping(path="cpf/{value}")
-    public ResponseEntity<?> searchPaymentByCPFPayer(@PathVariable("value") String cpf){
-        verifyPaymentExistsByCPFPayer(cpf);
-        return new ResponseEntity<>(paymentDAO.findByCpfPayer(cpf), HttpStatus.OK);
+    @DeleteMapping(path = "delete/")
+    public ResponseEntity<?> deletePaymentByBodyParams(@RequestBody PaymentDelete payment){
+        verifyPaymentExistsById(payment.getCodPayment());
+        Optional<Payment> paymentExists = paymentDAO.findById(payment.getCodPayment());
+        if (paymentExists.get().getStatusPayment().equals("Pendente de Processamento")){
+            paymentDAO.deleteById(payment.getCodPayment());
+        } else {
+            throw new BadRequestException("Payment cannot be Deleted: Payment status: " + paymentExists.get().getStatusPayment());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-    @GetMapping(path = "status/{value}")
-    public ResponseEntity<?> searchPaymentByStatus(@PathVariable("value") String status){
-        verifyPaymentExistsByStatusPayment(status);
-        return new ResponseEntity<>(paymentDAO.findByStatusPayment(status), HttpStatus.OK);
+    @PutMapping(path = "process/")
+    @Transactional
+    public ResponseEntity<?> updateStatusPayment(@RequestBody PaymentProcess paymentProcessed){
+        paymentProcessed.verifyStatus();
+        verifyPaymentExistsById(paymentProcessed.getCodPayment());
+        Optional<Payment> payment = paymentDAO.findById(paymentProcessed.getCodPayment());
+        payment.get().setStatusPayment(paymentProcessed.getNewStatus());
+        paymentDAO.save(payment.get());
+        return new ResponseEntity<>(paymentDAO.findById(paymentProcessed.getCodPayment()), HttpStatus.OK);
     }
+
     private List<Payment> resultSearchPayment(String key, String value){
-        return switch (key) {
-            case "id" -> (List<Payment>) paymentDAO.findAllById(Collections.singleton(convertToLongId(value)));
-            case "cpfOrCnpj" -> (List<Payment>) paymentDAO.findByCpfPayer(value);
-            case "statusPayment" -> (List<Payment>) paymentDAO.findByStatusPayment(value);
-            default -> throw new ValidationErrorException("key", "Key for search is invalid");
-        };
+        switch (key) {
+            case "codPayment" -> {
+                long convertedCodPayment = convertCodPayment(value);
+                verifyPaymentExistsById(convertedCodPayment);
+                return (List<Payment>) paymentDAO.findAllById(Collections.singleton(convertedCodPayment));
+            }
+            case "cpfOrCnpj" -> {
+                return paymentDAO.findByCpfPayer(value);
+            }
+            case "statusPayment" -> {
+                return paymentDAO.findByStatusPayment(value);
+            }
+            default -> throw new ValidationErrorException("filter", "Filter for search is invalid! Accept only: codPayment, cpfOrCnpj or statusPayment");
+        }
     }
-    private Long convertToLongId(String id){
+    private int convertCodPayment(String id){
         try {
-            return Long.parseLong(id);
+            return Integer.parseInt(id);
         }catch (Exception e) {
-            throw new ValidationErrorException("key", "Cannot convert '" + id + "' in to Number");
+            throw new ValidationErrorException("key", "Cannot convert '" + id + "' in a Number");
         }
     }
     private void verifyPaymentExistsById(Long id){
-        Optional<Payment> payment = paymentDAO.findById(id);
+        Optional<Payment> payment = paymentDAO.findById((long) convertCodPayment(String.valueOf(id)));
         if (payment.isEmpty()){
             throw new ResourceNotFoundException("Payment not found for ID: " + id);
-        }
-    }
-    private void verifyPaymentExistsByCPFPayer(String cpf){
-        List<Payment> payment = paymentDAO.findByCpfPayer(cpf);
-        if (payment.isEmpty()){
-            throw new ResourceNotFoundException("Payment not found for CPF: " + cpf);
-        }
-    }
-    private void verifyPaymentExistsByStatusPayment(String status){
-        List<Payment> payment = paymentDAO.findByStatusPayment(status);
-        if (payment.isEmpty()){
-            throw new ResourceNotFoundException("Payment not found for CPF: " + status);
         }
     }
     private void validateDetails(Payment payment){
