@@ -57,7 +57,7 @@ public class RestExceptionHandler {
                 .timestamp(new Date().getTime())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .title("Field validation error")
-                .detail("Field validation error")
+                .detail(ex.getMessage())
                 .developerMessage(ex.getClass().getName())
                 .field(ex.getField())
                 .fieldMessage(ex.getMessage())
@@ -72,10 +72,10 @@ public class RestExceptionHandler {
                 .timestamp(new Date().getTime())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .title("Bad Request")
-                .detail("Request invalid")
+                .detail(ex.getMessage())
                 .developerMessage(ex.getClass().getName())
                 .build();
-        
+
         return new ResponseEntity<>(brDetails, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(Exception.class)
