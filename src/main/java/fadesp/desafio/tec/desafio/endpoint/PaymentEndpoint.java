@@ -41,7 +41,7 @@ public class PaymentEndpoint {
     }
     @GetMapping(path="search/")
     public ResponseEntity<?> searchPayments(@RequestBody(required = false) Filter filter){
-        if(filter == null || filter.getFilter() == null) {
+        if(filter == null || filter.getFilter() == null || filter.getFilter().equals("all")) {
             return new ResponseEntity<>(paymentDAO.findAll(), HttpStatus.OK);
         }else{
             return new ResponseEntity<>(resultSearchPayment(filter.getFilter(), filter.getValue()), HttpStatus.OK);
@@ -88,14 +88,12 @@ public class PaymentEndpoint {
                 getPaymentIfExistsOrThrowError(convertedCodPayment);
                 return (List<Payment>) paymentDAO.findAllById(Collections.singleton(convertedCodPayment));
             }
-            case "cpfOrCnpj" -> {
-                return paymentDAO.findByCpfPayer(value);
-            }
-            case "statusPayment" -> {
-                return paymentDAO.findByStatusPayment(value);
-            }
-            default -> throw new ValidationErrorException("filter", "Filter for search is invalid! Accept only: codPayment, cpfOrCnpj or statusPayment");
+            case "cpfOrCnpj" -> paymentDAO.findByCpfPayer(value);
+            case "statusPayment" ->  paymentDAO.findByStatusPayment(value);
+            case "all" -> paymentDAO.findAll();
+            default -> throw new ValidationErrorException("filter", "Filter for search is invalid! Accept only: all, codPayment, cpfOrCnpj or statusPayment");
         }
+        return null;
     }
     private int convertCodPayment(String id){
         try {
