@@ -53,8 +53,7 @@ public class PaymentEndpoint {
     }
     @DeleteMapping(path = "delete/{codPayment}")
     public ResponseEntity<?> deletePayment(@PathVariable Long codPayment){
-        verifyPaymentExistsById(codPayment);
-        Optional<Payment> payment = paymentDAO.findById(codPayment);
+        Optional<Payment> payment = getPaymentIfExistsOrThrowError(codPayment);
         if (payment.get().getStatusPayment().equals("Pendente de Processamento")){
             paymentDAO.deleteById(codPayment);
         } else {
@@ -64,8 +63,7 @@ public class PaymentEndpoint {
     }
     @DeleteMapping(path = "delete/")
     public ResponseEntity<?> deletePaymentByBodyParams(@RequestBody PaymentDelete payment){
-        verifyPaymentExistsById(payment.getCodPayment());
-        Optional<Payment> paymentExists = paymentDAO.findById(payment.getCodPayment());
+        Optional<Payment> paymentExists = getPaymentIfExistsOrThrowError(payment.getCodPayment());
         if (paymentExists.get().getStatusPayment().equals("Pendente de Processamento")){
             paymentDAO.deleteById(payment.getCodPayment());
         } else {
@@ -77,8 +75,7 @@ public class PaymentEndpoint {
     @Transactional
     public ResponseEntity<?> updateStatusPayment(@RequestBody PaymentProcess paymentProcessed){
         paymentProcessed.verifyStatus();
-        verifyPaymentExistsById(paymentProcessed.getCodPayment());
-        Optional<Payment> payment = paymentDAO.findById(paymentProcessed.getCodPayment());
+        Optional<Payment> payment = getPaymentIfExistsOrThrowError(paymentProcessed.getCodPayment());
         payment.get().setStatusPayment(paymentProcessed.getNewStatus());
         paymentDAO.save(payment.get());
         return new ResponseEntity<>(paymentDAO.findById(paymentProcessed.getCodPayment()), HttpStatus.OK);
@@ -88,7 +85,7 @@ public class PaymentEndpoint {
         switch (key) {
             case "codPayment" -> {
                 long convertedCodPayment = convertCodPayment(value);
-                verifyPaymentExistsById(convertedCodPayment);
+                getPaymentIfExistsOrThrowError(convertedCodPayment);
                 return (List<Payment>) paymentDAO.findAllById(Collections.singleton(convertedCodPayment));
             }
             case "cpfOrCnpj" -> {
@@ -107,11 +104,12 @@ public class PaymentEndpoint {
             throw new ValidationErrorException("key", "Cannot convert '" + id + "' in a Number");
         }
     }
-    private void verifyPaymentExistsById(Long id){
+    private Optional<Payment> getPaymentIfExistsOrThrowError(Long id){
         Optional<Payment> payment = paymentDAO.findById((long) convertCodPayment(String.valueOf(id)));
         if (payment.isEmpty()){
             throw new ResourceNotFoundException("Payment not found for ID: " + id);
         }
+        return payment;
     }
     private void validateDetails(Payment payment){
         validatePaymentMethod(payment);
