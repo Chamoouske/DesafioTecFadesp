@@ -3,14 +3,12 @@ package fadesp.desafio.tec.desafio.model;
 import fadesp.desafio.tec.desafio.error.BadRequestException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
 @Entity
 public class Payment {
     @Id
-    @NotNull
     @Range(min = 1L)
     private long codPayment;
     @NotEmpty(message = "Must not be Empty")
@@ -20,7 +18,7 @@ public class Payment {
     private long cardNumber;
     @Range(min=1L, message = "Must not be less than 1")
     private float price;
-    private String statusPayment;
+    private String statusPayment = "Pendente de Processamento";
 
     public long getCodPayment() {
         return codPayment;
@@ -35,10 +33,6 @@ public class Payment {
     }
 
     public void setStatusPayment(String statusPayment) {
-        if(this.statusPayment == null){
-            this.statusPayment = statusPayment;
-            return;
-        }
         if(this.statusPayment.equals(statusPayment))
             throw new BadRequestException(this.statusPayment + " cannot be changed to " + statusPayment);
         if(this.statusPayment.equals("Pendente de Processamento")){

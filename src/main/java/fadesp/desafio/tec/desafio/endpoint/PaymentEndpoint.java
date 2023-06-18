@@ -36,7 +36,6 @@ public class PaymentEndpoint {
         if(paymentExists.isPresent())
             throw new ValidationErrorException("codPayment", "Payment with cod "+payment.getCodPayment()+" as already registered");
         validateDetails(payment);
-        payment.setStatusPayment("Pendente de Processamento");
         return new ResponseEntity<>(paymentDAO.save(payment), HttpStatus.CREATED);
     }
     @GetMapping(path="search/")
