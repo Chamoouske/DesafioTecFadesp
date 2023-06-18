@@ -51,6 +51,7 @@ public class PaymentEndpoint {
         return new ResponseEntity<>(searchPayments(key, value), HttpStatus.OK);
     }
     @DeleteMapping(path = "delete/{codPayment}")
+    @Transactional
     public ResponseEntity<?> deletePayment(@PathVariable Long codPayment){
         Optional<Payment> payment = getPaymentIfExistsOrThrowError(codPayment);
         if (payment.get().getStatusPayment().equals("Pendente de Processamento")){
@@ -61,6 +62,7 @@ public class PaymentEndpoint {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping(path = "delete/")
+    @Transactional
     public ResponseEntity<?> deletePaymentByBodyParams(@RequestBody PaymentDelete payment){
         Optional<Payment> paymentExists = getPaymentIfExistsOrThrowError(payment.getCodPayment());
         if (paymentExists.get().getStatusPayment().equals("Pendente de Processamento")){
