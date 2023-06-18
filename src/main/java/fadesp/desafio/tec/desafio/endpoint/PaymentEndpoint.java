@@ -40,16 +40,16 @@ public class PaymentEndpoint {
         return new ResponseEntity<>(paymentDAO.save(payment), HttpStatus.CREATED);
     }
     @GetMapping(path="search/")
-    public ResponseEntity<?> searchPayments(@RequestBody(required = false) Filter filter){
+    public ResponseEntity<?> searchPaymentsByBodyRequest(@RequestBody(required = false) Filter filter){
         if(filter == null || filter.getFilter() == null || filter.getFilter().equals("all")) {
             return new ResponseEntity<>(paymentDAO.findAll(), HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(resultSearchPayment(filter.getFilter(), filter.getValue()), HttpStatus.OK);
+            return new ResponseEntity<>(searchPayments(filter.getFilter(), filter.getValue()), HttpStatus.OK);
         }
     }
     @GetMapping(path = "search/filter={key}&value={value}")
-    public ResponseEntity<?> searchPayment(@PathVariable("key") String key, @PathVariable("value") String value){
-        return new ResponseEntity<>(resultSearchPayment(key, value), HttpStatus.OK);
+    public ResponseEntity<?> searchPaymentsByUrlParams(@PathVariable("key") String key, @PathVariable("value") String value){
+        return new ResponseEntity<>(searchPayments(key, value), HttpStatus.OK);
     }
     @DeleteMapping(path = "delete/{codPayment}")
     public ResponseEntity<?> deletePayment(@PathVariable Long codPayment){
@@ -81,7 +81,7 @@ public class PaymentEndpoint {
         return new ResponseEntity<>(paymentDAO.findById(paymentProcessed.getCodPayment()), HttpStatus.OK);
     }
 
-    private List<Payment> resultSearchPayment(String key, String value){
+    private List<Payment> searchPayments(String key, String value){
         switch (key) {
             case "codPayment" -> {
                 long convertedCodPayment = convertCodPayment(value);
