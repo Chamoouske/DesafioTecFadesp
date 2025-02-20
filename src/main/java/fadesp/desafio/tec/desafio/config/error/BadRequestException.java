@@ -1,4 +1,4 @@
-package fadesp.desafio.tec.desafio.error;
+package fadesp.desafio.tec.desafio.config.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

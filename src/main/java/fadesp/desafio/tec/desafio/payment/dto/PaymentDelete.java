@@ -1,4 +1,4 @@
-package fadesp.desafio.tec.desafio.model;
+package fadesp.desafio.tec.desafio.payment.dto;
 
 public class PaymentDelete {
     private long codPayment;
