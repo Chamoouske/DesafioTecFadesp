@@ -1,6 +1,6 @@
-package fadesp.desafio.tec.desafio.handler;
+package fadesp.desafio.tec.desafio.config.handler;
 
-import fadesp.desafio.tec.desafio.error.*;
+import fadesp.desafio.tec.desafio.config.error.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

@@ -1,6 +1,6 @@
-package fadesp.desafio.tec.desafio.model;
+package fadesp.desafio.tec.desafio.payment.entity;
 
-import fadesp.desafio.tec.desafio.error.BadRequestException;
+import fadesp.desafio.tec.desafio.config.error.BadRequestException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import org.hibernate.validator.constraints.NotEmpty;

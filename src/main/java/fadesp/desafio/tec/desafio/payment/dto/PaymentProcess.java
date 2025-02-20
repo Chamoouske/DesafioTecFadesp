@@ -1,6 +1,6 @@
-package fadesp.desafio.tec.desafio.model;
+package fadesp.desafio.tec.desafio.payment.dto;
 
-import fadesp.desafio.tec.desafio.error.ValidationErrorException;
+import fadesp.desafio.tec.desafio.config.error.ValidationErrorException;
 
 import java.util.Arrays;
 import java.util.List;

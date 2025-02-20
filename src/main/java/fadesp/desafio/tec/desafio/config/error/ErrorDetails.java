@@ -1,4 +1,4 @@
-package fadesp.desafio.tec.desafio.error;
+package fadesp.desafio.tec.desafio.config.error;
 
 public class ErrorDetails {
     private String title;

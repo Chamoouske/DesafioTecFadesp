@@ -1,6 +1,6 @@
-package fadesp.desafio.tec.desafio.repository;
+package fadesp.desafio.tec.desafio.payment.repository;
 
-import fadesp.desafio.tec.desafio.model.Payment;
+import fadesp.desafio.tec.desafio.payment.entity.Payment;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
