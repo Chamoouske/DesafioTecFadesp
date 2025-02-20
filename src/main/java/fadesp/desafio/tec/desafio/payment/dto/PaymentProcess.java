@@ -1,34 +1,28 @@
 package fadesp.desafio.tec.desafio.payment.dto;
 
-import fadesp.desafio.tec.desafio.config.error.ValidationErrorException;
-
-import java.util.Arrays;
-import java.util.List;
+import fadesp.desafio.tec.desafio.payment.enums.PaymentStatusEnum;
 
 public class PaymentProcess {
-    private long codPayment;
-    private String newStatus;
+    private Long codPayment;
+    private PaymentStatusEnum newStatus;
 
-    public long getCodPayment() {
+    public Long getCodPayment() {
         return codPayment;
     }
 
-    public void setCodPayment(long codPayment) {
+    public void setCodPayment(Long codPayment) {
         this.codPayment = codPayment;
     }
 
-    public String getNewStatus() {
+    public PaymentStatusEnum getNewStatus() {
         return newStatus;
     }
 
-    public void setNewStatus(String newStatus) {
+    public void setNewStatus(PaymentStatusEnum newStatus) {
         this.newStatus = newStatus;
     }
 
-    public void verifyStatus(){
-        List<String> validStatus = Arrays.asList("Processado com Falha", "Pendente de Processamento", "Processado com Sucesso");
-        if(!validStatus.contains(this.newStatus)){
-            throw new ValidationErrorException("newStatus", "New status is invalid! Accept only: Pendente de Processamento, Processado com Falha or Processado com Sucesso");
-        }
+    public void changeStatus(Payment payment) {
+        newStatus.changeStatus(payment);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class PaymentService {
@@ -23,13 +24,14 @@ public class PaymentService {
         this.paymentRepository = paymentRepository;
     }
 
-    private static Page<PaymentDto> mapToDto(Page<PaymentEntity> payments) {
-        return payments.map(PaymentBuilder::build);
-    }
-
     @Transactional
     public void deletePayment(Long codPayment) {
-        paymentRepository.deleteById(codPayment);
+        Optional<PaymentEntity> payment = paymentRepository.findAll(
+                        new PaymentSpecification(PaymentBuilder.builder().withCodPayment(codPayment).build())
+                        , Pageable.unpaged())
+                .stream().findFirst();
+        payment.orElseThrow().deletePayment();
+        paymentRepository.delete(payment.orElseThrow());
     }
 
     @Transactional
@@ -40,7 +42,7 @@ public class PaymentService {
 
     public Page<PaymentDto> searchPayments(Payment payment, Pageable pageable) {
         Page<PaymentEntity> payments = paymentRepository.findAll(new PaymentSpecification(payment), pageable);
-        return mapToDto(payments);
+        return payments.map(PaymentBuilder::build);
     }
 
     private void validateDetails(Payment payment) {

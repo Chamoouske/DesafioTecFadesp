@@ -16,4 +16,12 @@ public interface Payment {
     String getCardNumber();
 
     BigDecimal getPrice();
+
+    void pendenteDeProcessamento();
+
+    void processadoComFalha();
+
+    void processadoComSucesso();
+
+    void deletePayment();
 }
