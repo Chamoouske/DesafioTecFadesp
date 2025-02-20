@@ -1,6 +1,7 @@
 package fadesp.desafio.tec.desafio.payment.entity;
 
 import fadesp.desafio.tec.desafio.payment.dto.Payment;
+import fadesp.desafio.tec.desafio.payment.enums.PaymentMethodEnum;
 
 import java.math.BigDecimal;
 
@@ -34,7 +35,7 @@ public class PaymentBuilder extends PaymentEntity {
         return this;
     }
 
-    public PaymentBuilder withPaymentMethod(String paymentMethod) {
+    public PaymentBuilder withPaymentMethod(PaymentMethodEnum paymentMethod) {
         setPaymentMethod(paymentMethod);
         return this;
     }

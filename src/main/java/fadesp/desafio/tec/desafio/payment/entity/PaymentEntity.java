@@ -2,6 +2,7 @@ package fadesp.desafio.tec.desafio.payment.entity;
 
 import fadesp.desafio.tec.desafio.config.error.BadRequestException;
 import fadesp.desafio.tec.desafio.payment.dto.Payment;
+import fadesp.desafio.tec.desafio.payment.enums.PaymentMethodEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import org.hibernate.validator.constraints.Range;
@@ -14,7 +15,7 @@ public class PaymentEntity implements Payment {
     @Range(min = 1L)
     private Long codPayment;
     private String cpfPayer;
-    private String paymentMethod;
+    private PaymentMethodEnum paymentMethod;
     private String cardNumber;
     @Range(min = 1L, message = "Must not be less than 1")
     private BigDecimal price;
@@ -52,11 +53,11 @@ public class PaymentEntity implements Payment {
         this.cpfPayer = cpfPayer;
     }
 
-    public String getPaymentMethod() {
+    public PaymentMethodEnum getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 

@@ -1,5 +1,7 @@
 package fadesp.desafio.tec.desafio.payment.dto;
 
+import fadesp.desafio.tec.desafio.payment.enums.PaymentMethodEnum;
+
 import java.math.BigDecimal;
 
 public interface Payment {
@@ -9,7 +11,7 @@ public interface Payment {
 
     String getCpfPayer();
 
-    String getPaymentMethod();
+    PaymentMethodEnum getPaymentMethod();
 
     String getCardNumber();
 

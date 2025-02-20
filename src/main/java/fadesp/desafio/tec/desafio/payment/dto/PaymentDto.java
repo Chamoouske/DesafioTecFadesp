@@ -1,11 +1,13 @@
 package fadesp.desafio.tec.desafio.payment.dto;
 
+import fadesp.desafio.tec.desafio.payment.enums.PaymentMethodEnum;
+
 import java.math.BigDecimal;
 
 public class PaymentDto implements Payment {
     private Long codPayment;
     private String cpfPayer;
-    private String paymentMethod;
+    private PaymentMethodEnum paymentMethod;
     private String cardNumber;
     private BigDecimal price;
     private String statusPayment;
@@ -38,11 +40,11 @@ public class PaymentDto implements Payment {
     }
 
     @Override
-    public String getPaymentMethod() {
+    public PaymentMethodEnum getPaymentMethod() {
         return this.paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
