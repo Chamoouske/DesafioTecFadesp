@@ -33,7 +33,7 @@ public class PaymentService {
 
     @Transactional
     public PaymentDto savePayment(Payment payment) {
-        ValidatorCard.validateCardNumber(payment);
+        payment.validate();
         return PaymentBuilder.build(paymentRepository.save(PaymentBuilder.build(payment)));
     }
 
