@@ -1,11 +1,9 @@
 package fadesp.desafio.tec.desafio.payment.service;
 
-import fadesp.desafio.tec.desafio.config.error.ValidationErrorException;
 import fadesp.desafio.tec.desafio.payment.dto.Payment;
 import fadesp.desafio.tec.desafio.payment.dto.PaymentDto;
 import fadesp.desafio.tec.desafio.payment.entity.PaymentBuilder;
 import fadesp.desafio.tec.desafio.payment.entity.PaymentEntity;
-import fadesp.desafio.tec.desafio.payment.enums.PaymentMethodEnum;
 import fadesp.desafio.tec.desafio.payment.repository.PaymentRepository;
 import fadesp.desafio.tec.desafio.payment.specification.PaymentSpecification;
 import org.springframework.data.domain.Page;
@@ -13,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
