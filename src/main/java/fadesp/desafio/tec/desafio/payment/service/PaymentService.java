@@ -36,22 +36,12 @@ public class PaymentService {
 
     @Transactional
     public PaymentDto savePayment(Payment payment) {
-        validateDetails(payment);
+        ValidatorCard.validateCardNumber(payment);
         return PaymentBuilder.build(paymentRepository.save(PaymentBuilder.build(payment)));
     }
 
     public Page<PaymentDto> searchPayments(Payment payment, Pageable pageable) {
         Page<PaymentEntity> payments = paymentRepository.findAll(new PaymentSpecification(payment), pageable);
         return payments.map(PaymentBuilder::build);
-    }
-
-    private void validateDetails(Payment payment) {
-        validateNumberCard(payment);
-    }
-
-    private void validateNumberCard(Payment payment) {
-        if ((payment.getPaymentMethod().equals(PaymentMethodEnum.CREDITO) || payment.getPaymentMethod().equals(PaymentMethodEnum.DEBITO)) && Objects.equals(payment.getCardNumber(), "0")) {
-            throw new ValidationErrorException("cardNumber", "Card Number is invalid! Must not be null");
-        }
     }
 }
