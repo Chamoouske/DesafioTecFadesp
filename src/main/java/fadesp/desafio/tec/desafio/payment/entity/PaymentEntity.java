@@ -22,7 +22,7 @@ public class PaymentEntity implements Payment {
     private String statusPayment;
     private PaymentStatus state;
 
-    public PaymentEntity() {
+    public PaymentEntity() throws Exception {
         this.state = PaymentStatusFactory.create(statusPayment);
     }
 

@@ -17,7 +17,7 @@ public class PaymentDto implements Payment {
     @JsonIgnore
     private PaymentStatus state;
 
-    public PaymentDto() {
+    public PaymentDto() throws Exception {
         this.state = PaymentStatusFactory.create(statusPayment);
         this.statusPayment = state.getStatus().getStatus();
     }

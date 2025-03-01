@@ -1,11 +1,13 @@
 package fadesp.desafio.tec.desafio.payment.designpattern.state;
 
 import fadesp.desafio.tec.desafio.config.error.BadRequestException;
+import fadesp.desafio.tec.desafio.payment.designpattern.factory.PaymentStatusFactory;
 import fadesp.desafio.tec.desafio.payment.enums.PaymentStatusEnum;
 
 public class ProcessamentoComFalhaState extends PaymentStatus {
     public ProcessamentoComFalhaState() {
         super(PaymentStatusEnum.PROCESSAMENTO_COM_FALHA);
+        PaymentStatusFactory.getInstance().register(PaymentStatusEnum.PROCESSAMENTO_COM_FALHA.name(), ProcessamentoComFalhaState::new);
     }
 
     @Override

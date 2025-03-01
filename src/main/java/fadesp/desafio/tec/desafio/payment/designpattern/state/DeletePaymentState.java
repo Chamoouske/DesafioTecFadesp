@@ -1,5 +1,6 @@
 package fadesp.desafio.tec.desafio.payment.designpattern.state;
 
+import fadesp.desafio.tec.desafio.payment.designpattern.factory.PaymentStatusFactory;
 import fadesp.desafio.tec.desafio.payment.enums.PaymentStatusEnum;
 
 public class DeletePaymentState extends PaymentStatus {
@@ -8,6 +9,7 @@ public class DeletePaymentState extends PaymentStatus {
 
     public DeletePaymentState() {
         super(PaymentStatusEnum.DELETE_PAYMENT);
+        PaymentStatusFactory.getInstance().register(PaymentStatusEnum.DELETE_PAYMENT.name(), DeletePaymentState::new);
     }
 
     @Override
