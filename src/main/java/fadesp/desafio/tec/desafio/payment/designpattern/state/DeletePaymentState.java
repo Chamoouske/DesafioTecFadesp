@@ -9,7 +9,7 @@ public class DeletePaymentState extends PaymentStatus {
 
     public DeletePaymentState() {
         super(PaymentStatusEnum.DELETE_PAYMENT);
-        PaymentStatusFactory.getInstance().register(PaymentStatusEnum.DELETE_PAYMENT.name(), DeletePaymentState::new);
+        PaymentStatusFactory.register(PaymentStatusEnum.DELETE_PAYMENT.name(), DeletePaymentState::new);
     }
 
     @Override

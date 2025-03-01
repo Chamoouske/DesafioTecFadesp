@@ -7,7 +7,7 @@ import fadesp.desafio.tec.desafio.payment.enums.PaymentStatusEnum;
 public class ProcessamentoComFalhaState extends PaymentStatus {
     public ProcessamentoComFalhaState() {
         super(PaymentStatusEnum.PROCESSAMENTO_COM_FALHA);
-        PaymentStatusFactory.getInstance().register(PaymentStatusEnum.PROCESSAMENTO_COM_FALHA.name(), ProcessamentoComFalhaState::new);
+        PaymentStatusFactory.register(PaymentStatusEnum.PROCESSAMENTO_COM_FALHA.name(), ProcessamentoComFalhaState::new);
     }
 
     @Override

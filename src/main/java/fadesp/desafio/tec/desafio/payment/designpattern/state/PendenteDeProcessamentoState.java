@@ -7,7 +7,7 @@ import fadesp.desafio.tec.desafio.payment.enums.PaymentStatusEnum;
 public class PendenteDeProcessamentoState extends PaymentStatus {
     public PendenteDeProcessamentoState() {
         super(PaymentStatusEnum.PENDENTE_DE_PROCESSAMENTO);
-        PaymentStatusFactory.getInstance().register(PaymentStatusEnum.PENDENTE_DE_PROCESSAMENTO.name(), PendenteDeProcessamentoState::new);
+        PaymentStatusFactory.register(PaymentStatusEnum.PENDENTE_DE_PROCESSAMENTO.name(), PendenteDeProcessamentoState::new);
     }
 
     @Override
